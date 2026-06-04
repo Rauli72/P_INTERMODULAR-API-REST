@@ -233,14 +233,18 @@ A continuación se muestran capturas de pantalla de la especificación OpenAPI v
 ![Validación en Swagger Editor](3-openapi/dist/img/Validacion.png)
 
 > [!NOTE]
-> Como se puede ver en la validación con el editor no se muestra **ningún mensaje en rojo.
+> Como se puede ver en la validación con el editor no se muestra **ningún mensaje en rojo**.
 
 ![Validación Endpoint en Swagger Editor](3-openapi/dist/img/Endpoint.png)
 ![Validación Endpoint Ej1 en Swagger Editor](3-openapi/dist/img/Endpoint_Ej1.png)
 ![Validación Endpoint Ej1 en Swagger Editor](3-openapi/dist/img/Endpoint_Ej2.png)
+![Validación Endpoint Ej1 en Swagger Editor](3-openapi/dist/img/Endpoint_Ej3.png)
+![Validación Endpoint Ej1 en Swagger Editor](3-openapi/dist/img/Endpoint_Ej4.png)
+![Validación Endpoint Ej1 en Swagger Editor](3-openapi/dist/img/Endpoint_Ej5.png)
+![Validación Endpoint Ej1 en Swagger Editor](3-openapi/dist/img/Endpoint_Ej6.png)
 
 > [!NOTE]
-> Esta captura son diferentes **ejemplos** de los **Endpoints disponibles**.
+> Estas captura son diferentes **ejemplos** de los **Endpoints disponibles**.
 
 ![Validación Schemas en Swagger Editor](3-openapi/dist/img/Schemas.png)
 
