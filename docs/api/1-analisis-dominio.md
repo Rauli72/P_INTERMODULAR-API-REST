@@ -1,7 +1,7 @@
 # Análisis del Dominio - API del Sistema de Reservas (Hub de Innovación)
 
-**Proyecto Intermodular - Diseño de API REST**
-**Autor:** Raúl Cayuela Maciá
+**Proyecto Intermodular - Diseño de API REST**  
+**Autor:** Raúl Cayuela Maciá  
 **Tema:** Gestión de reservas de recursos (salas, auditorio, estudio, etc.) en un espacio de innovación.
 
 ## 1. Tablas de la base de datos que usaré
