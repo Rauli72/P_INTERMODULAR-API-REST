@@ -1,0 +1,9 @@
+{
+  "error": "Datos de entrada inválidos",
+  "detalles": [
+    {
+      "campo": "hora_fin",
+      "mensaje": "La hora de fin debe ser posterior a la hora de inicio"
+    }
+  ]
+}

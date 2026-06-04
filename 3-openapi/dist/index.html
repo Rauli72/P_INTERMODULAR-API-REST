@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API de Reservas - Swagger UI</title>
+  <link rel="stylesheet" type="text/css" href="./swagger-ui-dist/swagger-ui.css" />
+  <link rel="icon" type="image/png" href="./swagger-ui-dist/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./swagger-ui-dist/favicon-16x16.png" sizes="16x16" />
+  <style>
+    html
+    {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *,
+    *:before,
+    *:after
+    {
+      box-sizing: inherit;
+    }
+
+    body
+    {
+      margin:0;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+<div id="swagger-ui"></div>
+
+<script src="./swagger-ui-dist/swagger-ui-bundle.js" charset="UTF-8"> </script>
+<script src="./swagger-ui-dist/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+<script>
+  window.onload = function() {
+    // Begin Swagger UI call region
+    const ui = SwaggerUIBundle({
+      spec: {
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Reservas - Hub de Innovación",
+    "description": "API para gestionar reservas de recursos (salas, auditorio, estudio, etc.) en un espacio de innovación.",
+    "version": "1.0.0",
+    "contact": {
+      "email": "soporte@hubinnovacion.es"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Servidor local de desarrollo"
+    }
+  ],
+  "paths": {
+    "/reservas": {
+      "get": {
+        "summary": "Listar todas las reservas",
+        "description": "Devuelve una lista con todas las reservas (simplificado, sin autenticación).",
+        "responses": {
+          "200": {
+            "description": "Lista de reservas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reserva"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear una nueva reserva",
+        "description": "Crea una reserva para un recurso.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reserva creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reserva"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos (errores de validación)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto de horario (el recurso ya está reservado en esa franja)"
+          }
+        }
+      }
+    },
+    "/reservas/{reservaId}": {
+      "get": {
+        "summary": "Obtener una reserva por ID",
+        "description": "Devuelve los detalles de una reserva específica.",
+        "parameters": [
+          {
+            "name": "reservaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reserva encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reserva"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reserva no encontrada"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar parcialmente una reserva",
+        "description": "Modifica algunos campos de una reserva existente.",
+        "parameters": [
+          {
+            "name": "reservaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "estado": {
+                    "type": "string",
+                    "enum": [
+                      "pendiente",
+                      "confirmada",
+                      "cancelada"
+                    ]
+                  },
+                  "observaciones": {
+                    "type": "string"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "hora_inicio": {
+                    "type": "string",
+                    "format": "time"
+                  },
+                  "hora_fin": {
+                    "type": "string",
+                    "format": "time"
+                  },
+                  "numero_plazas": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "motivo": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reserva actualizada correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reserva"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos o cambio no permitido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reserva no encontrada"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Cancelar una reserva (borrado lógico)",
+        "description": "Cambia el estado de la reserva a 'cancelada'.",
+        "parameters": [
+          {
+            "name": "reservaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Reserva cancelada exitosamente (sin contenido)"
+          },
+          "404": {
+            "description": "Reserva no encontrada"
+          }
+        }
+      }
+    },
+    "/recursos": {
+      "get": {
+        "summary": "Listar todos los recursos",
+        "description": "Devuelve el catálogo de recursos disponibles (salas, auditorio, etc.).",
+        "responses": {
+          "200": {
+            "description": "Lista de recursos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Recurso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recursos/{recursoId}": {
+      "get": {
+        "summary": "Obtener un recurso por ID",
+        "parameters": [
+          {
+            "name": "recursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recurso encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recurso"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso no encontrado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Reserva": {
+        "type": "object",
+        "required": [
+          "id",
+          "recurso_id",
+          "recurso_nombre",
+          "usuario_id",
+          "usuario_nombre",
+          "fecha",
+          "hora_inicio",
+          "hora_fin",
+          "numero_plazas",
+          "estado",
+          "creado_en"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 101
+          },
+          "recurso_id": {
+            "type": "integer",
+            "example": 3
+          },
+          "recurso_nombre": {
+            "type": "string",
+            "example": "Auditorio Principal"
+          },
+          "usuario_id": {
+            "type": "integer",
+            "example": 5
+          },
+          "usuario_nombre": {
+            "type": "string",
+            "example": "Beatriz Soler"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-10"
+          },
+          "hora_inicio": {
+            "type": "string",
+            "format": "time",
+            "example": "09:00"
+          },
+          "hora_fin": {
+            "type": "string",
+            "format": "time",
+            "example": "11:00"
+          },
+          "numero_plazas": {
+            "type": "integer",
+            "example": 80
+          },
+          "motivo": {
+            "type": "string",
+            "example": "Charla sobre IA"
+          },
+          "observaciones": {
+            "type": "string",
+            "example": "Probar proyector antes"
+          },
+          "coste": {
+            "type": "number",
+            "format": "float",
+            "example": 150
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "pendiente",
+              "confirmada",
+              "cancelada"
+            ],
+            "example": "pendiente"
+          },
+          "creado_en": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-03-01T12:00:00Z"
+          }
+        }
+      },
+      "ReservaInput": {
+        "type": "object",
+        "required": [
+          "recurso_id",
+          "fecha",
+          "hora_inicio",
+          "hora_fin",
+          "numero_plazas"
+        ],
+        "properties": {
+          "recurso_id": {
+            "type": "integer",
+            "example": 3
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-10"
+          },
+          "hora_inicio": {
+            "type": "string",
+            "format": "time",
+            "example": "09:00"
+          },
+          "hora_fin": {
+            "type": "string",
+            "format": "time",
+            "example": "11:00"
+          },
+          "numero_plazas": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 80
+          },
+          "motivo": {
+            "type": "string",
+            "example": "Charla sobre IA"
+          },
+          "observaciones": {
+            "type": "string",
+            "example": "Probar proyector antes"
+          },
+          "coste": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "example": 150
+          }
+        }
+      },
+      "Recurso": {
+        "type": "object",
+        "required": [
+          "id_recurso",
+          "nombre",
+          "capacidad"
+        ],
+        "properties": {
+          "id_recurso": {
+            "type": "integer",
+            "example": 3
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Auditorio Principal"
+          },
+          "ubicacion": {
+            "type": "string",
+            "example": "Planta Baja - Acceso A"
+          },
+          "capacidad": {
+            "type": "integer",
+            "example": 100
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Escenario con sonido envolvente y 100 butacas"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Datos de entrada inválidos"
+          },
+          "detalles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "campo": {
+                  "type": "string"
+                },
+                "mensaje": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}, // Path to your OpenAPI YAML file
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+      layout: "StandaloneLayout"
+    });
+    // End Swagger UI call region
+
+    window.ui = ui;
+  };
+</script>
+</body>
+</html>

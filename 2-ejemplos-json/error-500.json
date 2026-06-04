@@ -1,0 +1,9 @@
+{
+  "error": "Error interno del servidor",
+  "detalles": [
+    {
+      "campo": "servidor",
+      "mensaje": "No se pudo completar la solicitud. Consulte los logs para más información."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": 101,
+  "recurso_id": 3,
+  "recurso_nombre": "Auditorio Principal",
+  "usuario_id": 5,
+  "usuario_nombre": "Beatriz Soler",
+  "fecha": "2026-04-10",
+  "hora_inicio": "09:00",
+  "hora_fin": "11:00",
+  "numero_plazas": 80,
+  "motivo": "Charla sobre IA",
+  "observaciones": "Probar proyector antes",
+  "coste": 150.00,
+  "estado": "pendiente",
+  "creado_en": "2026-03-01T12:00:00Z"
+}
